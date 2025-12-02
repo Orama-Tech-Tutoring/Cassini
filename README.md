@@ -71,5 +71,5 @@ Apple "Liquid Glass" aesthetic with glassmorphism effects, smooth animations, an
 
 **Built with ❤️ by The Lab Technologies**
 
-**Primary Author:** Google Antigravity
+**Primary Author:** Google Antigravity /
 **Ideas Director:**  Dutch E.
