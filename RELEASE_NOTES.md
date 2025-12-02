@@ -1,5 +1,42 @@
 # TLT Whiteboard - Release Notes
 
+## Version 1.3.0 - Shape Tools & Input Enhancement
+
+**Release Date:** December 2, 2025
+
+### 🚀 New Features
+
+#### Shape Tools
+
+- ✅ **Rectangle Tool** - Draw rectangles by dragging from corner to corner
+- ✅ **Circle Tool** - Draw circles/ellipses with dynamic sizing
+- ✅ **Line Tool** - Draw straight lines between two points
+- ✅ **Arrow Tool** - Draw arrows with automatic arrowhead rendering
+- ✅ **Real-time Preview** - See shapes as you draw them before releasing
+- ✅ **Full Integration** - Shapes are selectable, movable, and deletable like other elements
+
+#### Stylus-Only Mode
+
+- ✅ **Touch-to-Pan** - Touch inputs exclusively pan and navigate the canvas
+- ✅ **Pen-to-Draw** - Only stylus and mouse inputs can draw and interact with tools
+- ✅ **Improved Workflow** - Prevents accidental drawing when using touch to navigate
+- ✅ **Cross-Platform** - Works on tablets, touch laptops, and stylus devices
+
+### 🔧 Technical Improvements
+
+- **Shape Rendering:** Dedicated `drawShape()` function with support for all geometric primitives
+- **Input Discrimination:** Pointer Events API detects touch vs pen/mouse for intelligent input handling
+- **Live Preview:** Shape preview system shows shapes in real-time during drawing
+- **Hit Detection:** Enhanced selection logic for shape bounding boxes
+
+### 🎨 UI Updates
+
+- **Toolbar:** Added 4 new shape tool buttons (Rectangle, Circle, Line, Arrow)
+- **Icons:** Using Lucide React icons for consistent visual language
+- **Ordering:** Shape tools positioned logically after selection tools
+
+---
+
 ## Version 1.2.0 - Infinite Canvas & AI
 
 **Release Date:** November 20, 2025
@@ -18,7 +55,7 @@
 - ✅ **Gemini Chat Sidebar** - Built-in AI assistant powered by Google Gemini
 - ✅ **Collapsible Interface** - Chat sidebar can be minimized to maximize drawing space
 - ✅ **Context-Aware** - Real-time responses with loading states and error handling
-- ✅ **Model Support** - Compatible with gemma-3-4b-it and other Gemini models
+- ✅ **Model Support** - Compatible with gemini-2.0-flash-lite and other Gemini models
 
 #### UI Enhancements
 
@@ -34,7 +71,7 @@
 ### 📝 Configuration
 
 - Gemini API key is configured in `src/services/geminiService.js`
-- Model: `gemma-3-4b-it` (verified compatible with v1beta API)
+- Model: `gemini-2.0-flash-lite` (verified compatible with v1beta API)
 
 ---
 
@@ -155,10 +192,6 @@ npm run build
 - **Intuitive UX** - drag-to-move without toggle buttons
 - **Clean Codebase** - well-organized and maintainable
 
-### 🐛 Known Issues
-
-None - all features tested and working!
-
 ### 📝 Future Enhancements (Potential v2.0)
 
 - Export canvas as image (PNG/SVG)
@@ -166,7 +199,6 @@ None - all features tested and working!
 - Layers support
 - Collaboration features
 - Keyboard shortcuts
-- Shape tools (rectangle, circle, line)
 
 ---
 

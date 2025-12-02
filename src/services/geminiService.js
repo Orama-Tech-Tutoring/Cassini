@@ -1,8 +1,8 @@
 
 // Gemini API Key
-export const GEMINI_API_KEY = 'AIzaSyAgn5eVCmAesy_tEgoqDyEAuJzGt14yCJw';
+export const GEMINI_API_KEY = 'AIzaSyDJ3iasAbPdv_aTfex276nc-Q_6oh8KZhc';
 
-const API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent';
+const API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent';
 
 export const sendMessageToGemini = async (message, history = []) => {
     if (!GEMINI_API_KEY) {
@@ -49,8 +49,9 @@ export const sendMessageToGemini = async (message, history = []) => {
         throw error;
     }
 };
+
 export const getAvailableModels = async () => {
-    if (GEMINI_API_KEY === 'INSERT_YOUR_KEY_HERE') {
+    if (!GEMINI_API_KEY) {
         return ['API Key not configured'];
     }
 

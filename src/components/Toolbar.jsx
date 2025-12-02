@@ -5,13 +5,17 @@ import {
     Eraser,
     MousePointer,
     Ruler,
-    Circle,
+    Circle as CircleIcon, // Alias for Protractor
     Type,
     Undo,
     Redo,
     Trash2,
     ChevronUp,
-    ChevronDown
+    ChevronDown,
+    Square,
+    Circle,
+    Minus,
+    ArrowRight
 } from 'lucide-react';
 
 const Toolbar = () => {
@@ -32,8 +36,12 @@ const Toolbar = () => {
         { id: 'pen', icon: Pen, label: 'Pen' },
         { id: 'eraser', icon: Eraser, label: 'Eraser' },
         { id: 'select', icon: MousePointer, label: 'Select' },
+        { id: 'rectangle', icon: Square, label: 'Rectangle' },
+        { id: 'circle', icon: Circle, label: 'Circle' },
+        { id: 'line', icon: Minus, label: 'Line' },
+        { id: 'arrow', icon: ArrowRight, label: 'Arrow' },
         { id: 'ruler', icon: Ruler, label: 'Ruler' },
-        { id: 'protractor', icon: Circle, label: 'Protractor' },
+        { id: 'protractor', icon: CircleIcon, label: 'Protractor' },
         { id: 'text', icon: Type, label: 'Text', action: () => setShowTextModal(true) }
     ];
 

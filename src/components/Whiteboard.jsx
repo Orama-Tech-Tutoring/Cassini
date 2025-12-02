@@ -7,12 +7,13 @@ const Whiteboard = () => {
     const canvasRef = useRef(null);
     const currentPathRef = useRef([]);
     const [isDrawing, setIsDrawing] = useState(false);
-    const [currentPath, setCurrentPath] = useState([]);
     const [draggedElement, setDraggedElement] = useState(null);
     const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
     const [selectionBox, setSelectionBox] = useState(null);
     const [selectedElements, setSelectedElements] = useState([]);
     const [isErasing, setIsErasing] = useState(false);
+    const [isPanning, setIsPanning] = useState(false);
+    const [currentShape, setCurrentShape] = useState(null); // For shape preview
 
     const {
         activeTool,
@@ -52,7 +53,7 @@ const Whiteboard = () => {
     // Redraw canvas whenever elements change
     useEffect(() => {
         redrawCanvas();
-    }, [elements, ruler, protractor, selectedElements, selectionBox, viewport]);
+    }, [elements, ruler, protractor, selectedElements, selectionBox, viewport, currentShape]);
 
     // Handle Zoom
     useEffect(() => {
@@ -168,6 +169,58 @@ const Whiteboard = () => {
         }
     };
 
+    const drawShape = (ctx, element) => {
+        ctx.save();
+        ctx.strokeStyle = element.color;
+        ctx.lineWidth = element.thickness;
+        ctx.globalAlpha = element.opacity;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+
+        if (element.type === 'rectangle') {
+            ctx.strokeRect(element.x, element.y, element.width, element.height);
+        } else if (element.type === 'circle') {
+            ctx.beginPath();
+            ctx.ellipse(
+                element.x + element.width / 2,
+                element.y + element.height / 2,
+                Math.abs(element.width / 2),
+                Math.abs(element.height / 2),
+                0, 0, 2 * Math.PI
+            );
+            ctx.stroke();
+        } else if (element.type === 'line') {
+            ctx.beginPath();
+            ctx.moveTo(element.x, element.y);
+            ctx.lineTo(element.x + element.width, element.y + element.height);
+            ctx.stroke();
+        } else if (element.type === 'arrow') {
+            const startX = element.x;
+            const startY = element.y;
+            const endX = element.x + element.width;
+            const endY = element.y + element.height;
+
+            // Draw line
+            ctx.beginPath();
+            ctx.moveTo(startX, startY);
+            ctx.lineTo(endX, endY);
+            ctx.stroke();
+
+            // Draw arrowhead
+            const angle = Math.atan2(endY - startY, endX - startX);
+            const headLength = element.thickness * 4;
+
+            ctx.beginPath();
+            ctx.moveTo(endX, endY);
+            ctx.lineTo(endX - headLength * Math.cos(angle - Math.PI / 6), endY - headLength * Math.sin(angle - Math.PI / 6));
+            ctx.lineTo(endX - headLength * Math.cos(angle + Math.PI / 6), endY - headLength * Math.sin(angle + Math.PI / 6));
+            ctx.lineTo(endX, endY);
+            ctx.fillStyle = element.color;
+            ctx.fill();
+        }
+        ctx.restore();
+    };
+
     const drawRuler = (ctx, ruler) => {
         ctx.save();
         ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
@@ -267,6 +320,13 @@ const Whiteboard = () => {
                 width: element.width,
                 height: element.height
             };
+        } else if (['rectangle', 'circle', 'line', 'arrow'].includes(element.type)) {
+            bounds = {
+                x: Math.min(element.x, element.x + element.width),
+                y: Math.min(element.y, element.y + element.height),
+                width: Math.abs(element.width),
+                height: Math.abs(element.height)
+            };
         }
 
         if (bounds) {
@@ -297,8 +357,15 @@ const Whiteboard = () => {
                 drawText(ctx, element);
             } else if (element.type === 'equation') {
                 drawEquation(ctx, element);
+            } else if (['rectangle', 'circle', 'line', 'arrow'].includes(element.type)) {
+                drawShape(ctx, element);
             }
         });
+
+        // Draw current shape preview
+        if (currentShape) {
+            drawShape(ctx, currentShape);
+        }
 
         // Draw ruler and protractor
         if (ruler) drawRuler(ctx, ruler);
@@ -352,6 +419,16 @@ const Whiteboard = () => {
                 width: element.width,
                 height: element.height
             });
+        } else if (['rectangle', 'circle', 'line', 'arrow'].includes(element.type)) {
+            // Simple bounding box check for shapes
+            const minX = Math.min(element.x, element.x + element.width);
+            const maxX = Math.max(element.x, element.x + element.width);
+            const minY = Math.min(element.y, element.y + element.height);
+            const maxY = Math.max(element.y, element.y + element.height);
+
+            // Add padding for easier selection
+            return pos.x >= minX - 10 && pos.x <= maxX + 10 &&
+                pos.y >= minY - 10 && pos.y <= maxY + 10;
         }
         return false;
     };
@@ -360,7 +437,14 @@ const Whiteboard = () => {
         e.target.setPointerCapture(e.pointerId);
         const pos = getPointerPos(e);
 
-        // Panning with Select tool on empty space
+        // TOUCH INPUT: Force Pan
+        if (e.pointerType === 'touch') {
+            setDragOffset({ x: e.clientX, y: e.clientY });
+            setIsPanning(true);
+            return;
+        }
+
+        // MOUSE/PEN INPUT: Tool Logic
         if (activeTool === 'select') {
             const clickedElement = elements.find(el => isPointNearElement(pos, el));
             if (!clickedElement) {
@@ -438,13 +522,36 @@ const Whiteboard = () => {
                 startAngle: 0,
                 endAngle: Math.PI
             });
+        } else if (['rectangle', 'circle', 'line', 'arrow'].includes(activeTool)) {
+            setIsDrawing(true);
+            setCurrentShape({
+                type: activeTool,
+                x: pos.x,
+                y: pos.y,
+                width: 0,
+                height: 0,
+                startX: pos.x,
+                startY: pos.y,
+                color: toolProperties.color,
+                thickness: toolProperties.thickness,
+                opacity: toolProperties.opacity
+            });
         }
     };
 
     const handlePointerMove = (e) => {
         const pos = getPointerPos(e);
 
-        // Handle Panning
+        // TOUCH INPUT: Pan
+        if (isPanning && e.pointerType === 'touch') {
+            const dx = e.clientX - dragOffset.x;
+            const dy = e.clientY - dragOffset.y;
+            setViewport(prev => ({ ...prev, x: prev.x + dx, y: prev.y + dy }));
+            setDragOffset({ x: e.clientX, y: e.clientY });
+            return;
+        }
+
+        // Handle Panning (Mouse/Pen)
         if (activeTool === 'select' && isDrawing && !draggedElement && !selectionBox) {
             const dx = e.clientX - dragOffset.x;
             const dy = e.clientY - dragOffset.y;
@@ -505,6 +612,16 @@ const Whiteboard = () => {
             return;
         }
 
+        // Update shape preview
+        if (isDrawing && currentShape) {
+            setCurrentShape({
+                ...currentShape,
+                width: pos.x - currentShape.startX,
+                height: pos.y - currentShape.startY
+            });
+            return;
+        }
+
         // Allow dragging selected elements
         if (draggedElement && activeTool === 'select') {
             const newX = pos.x - dragOffset.x;
@@ -542,6 +659,11 @@ const Whiteboard = () => {
     const handlePointerUp = (e) => {
         e.target.releasePointerCapture(e.pointerId);
 
+        if (isPanning) {
+            setIsPanning(false);
+            return;
+        }
+
         if (isDrawing && activeTool === 'pen' && currentPathRef.current.length > 0) {
             addElement({
                 id: Date.now(),
@@ -552,6 +674,17 @@ const Whiteboard = () => {
                 opacity: toolProperties.opacity
             });
             currentPathRef.current = []; // Clear ref
+        }
+
+        if (isDrawing && currentShape) {
+            // Only add if it has some size
+            if (Math.abs(currentShape.width) > 5 || Math.abs(currentShape.height) > 5) {
+                addElement({
+                    id: Date.now(),
+                    ...currentShape
+                });
+            }
+            setCurrentShape(null);
         }
 
         if (selectionBox && activeTool === 'select') {
@@ -633,4 +766,3 @@ const Whiteboard = () => {
 };
 
 export default Whiteboard;
-
