@@ -15,7 +15,9 @@ import {
     Square,
     Circle,
     Minus,
-    ArrowRight
+    ArrowRight,
+    Download,
+    Upload
 } from 'lucide-react';
 
 const Toolbar = () => {
@@ -27,7 +29,9 @@ const Toolbar = () => {
         undo,
         redo,
         clearCanvas,
-        setShowTextModal
+        setShowTextModal,
+        exportCanvasPNG,
+        importImage
     } = useWhiteboard();
 
     const [isCollapsed, setIsCollapsed] = useState(false);
@@ -278,6 +282,46 @@ const Toolbar = () => {
                             }}
                         >
                             <Trash2 size={20} />
+                        </button>
+
+                        {/* Divider */}
+                        <div style={{
+                            width: '1px',
+                            height: '40px',
+                            background: 'rgba(255, 255, 255, 0.2)',
+                            margin: '0 4px'
+                        }} />
+
+                        {/* Export/Import Buttons */}
+                        <button
+                            className="glass-button"
+                            onClick={exportCanvasPNG}
+                            title="Export as PNG (Ctrl+E)"
+                            style={{
+                                width: '40px',
+                                height: '40px',
+                                padding: '8px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center'
+                            }}
+                        >
+                            <Download size={20} />
+                        </button>
+                        <button
+                            className="glass-button"
+                            onClick={importImage}
+                            title="Import Image (Ctrl+I)"
+                            style={{
+                                width: '40px',
+                                height: '40px',
+                                padding: '8px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center'
+                            }}
+                        >
+                            <Upload size={20} />
                         </button>
                     </>
                 )}

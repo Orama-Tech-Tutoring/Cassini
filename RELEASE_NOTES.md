@@ -1,5 +1,49 @@
 # Cassini - Release Notes
 
+## Version 1.3.2 - Export, Import & Keyboard Shortcuts
+
+**Release Date:** December 3, 2025
+
+### 🚀 New Features
+
+#### Export Canvas
+
+- ✅ **Export as PNG** - Download your whiteboard with a white background
+- ✅ **One-Click Download** - Export button in toolbar (or Ctrl+E)
+- ✅ **Auto-Naming** - Files named `cassini-export-{timestamp}.png`
+- ✅ **Full Canvas Export** - Exports entire visible canvas including all elements
+
+#### Import Images
+
+- ✅ **Image Import** - Upload button in toolbar (or Ctrl+I)
+- ✅ **Drag & Position** - Imported images are selectable and movable
+- ✅ **Supports All Formats** - PNG, JPG, GIF, WebP, and more
+- ✅ **Original Size Preservation** - Images import at their natural dimensions
+
+#### Keyboard Shortcuts
+
+- ✅ **Tool Selection**:
+  - `P` - Pen
+  - `E` - Eraser
+  - `S` / `V` - Select
+  - `R` - Rectangle
+  - `C` - Circle
+  - `L` - Line
+  - `A` - Arrow
+- ✅ **Undo/Redo**:
+  - `Ctrl+Z` / `Cmd+Z` - Undo
+  - `Ctrl+Y` / `Ctrl+Shift+Z` - Redo
+- ✅ **Smart Detection** - Shortcuts disabled when typing in input fields
+
+### 🔧 Technical Improvements
+
+- **Canvas Export:** Creates temporary canvas with white background for clean exports
+- **File Handling:** FileReader API for secure image uploads
+- **Event Management:** Global keyboard listener with context-aware disabling
+- **Element Support:** Full selection and movement support for imported images
+
+---
+
 ## Version 1.3.0 - Shape Tools & Input Enhancement
 
 **Release Date:** December 2, 2025
@@ -191,14 +235,6 @@ npm run build
 - **Premium Design** with Apple Liquid Glass aesthetic
 - **Intuitive UX** - drag-to-move without toggle buttons
 - **Clean Codebase** - well-organized and maintainable
-
-### 📝 Future Enhancements (Potential v2.0)
-
-- Export canvas as image (PNG/SVG)
-- Import background images
-- Layers support
-- Collaboration features
-- Keyboard shortcuts
 
 ---
 

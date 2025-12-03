@@ -40,6 +40,9 @@ export const WhiteboardProvider = ({ children }) => {
     // Viewport state for Infinite Canvas
     const [viewport, setViewport] = useState({ x: 0, y: 0, scale: 1 });
 
+    // Canvas reference for export
+    const [canvasRef, setCanvasRef] = useState(null);
+
     const zoomIn = useCallback(() => {
         setViewport(prev => ({ ...prev, scale: Math.min(prev.scale * 1.1, 5) }));
     }, []);
@@ -100,6 +103,60 @@ export const WhiteboardProvider = ({ children }) => {
         setProtractor(null);
     }, []);
 
+    const exportCanvasPNG = useCallback(() => {
+        if (!canvasRef) return;
+
+        // Create a temporary canvas to export
+        const tempCanvas = document.createElement('canvas');
+        tempCanvas.width = canvasRef.width;
+        tempCanvas.height = canvasRef.height;
+        const tempCtx = tempCanvas.getContext('2d');
+
+        // Fill white background
+        tempCtx.fillStyle = '#FFFFFF';
+        tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+
+        // Copy current canvas
+        tempCtx.drawImage(canvasRef, 0, 0);
+
+        // Trigger download
+        const link = document.createElement('a');
+        link.download = `cassini-export-${Date.now()}.png`;
+        link.href = tempCanvas.toDataURL('image/png');
+        link.click();
+    }, [canvasRef]);
+
+    const importImage = useCallback(() => {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'image/*';
+        input.onchange = (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const img = new Image();
+                img.onload = () => {
+                    addElement({
+                        id: Date.now(),
+                        type: 'image',
+                        src: event.target.result,
+                        x: 100,
+                        y: 100,
+                        width: img.width,
+                        height: img.height,
+                        originalWidth: img.width,
+                        originalHeight: img.height
+                    });
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        };
+        input.click();
+    }, [addElement]);
+
     const value = {
         activeTool,
         setActiveTool,
@@ -129,7 +186,11 @@ export const WhiteboardProvider = ({ children }) => {
         setViewport,
         zoomIn,
         zoomOut,
-        resetZoom
+        resetZoom,
+        canvasRef,
+        setCanvasRef,
+        exportCanvasPNG,
+        importImage
     };
 
     return (

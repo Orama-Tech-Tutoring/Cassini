@@ -17,6 +17,7 @@ const Whiteboard = () => {
 
     const {
         activeTool,
+        setActiveTool,
         toolProperties,
         elements,
         addElement,
@@ -29,7 +30,10 @@ const Whiteboard = () => {
         selectedElement,
         setSelectedElement,
         viewport,
-        setViewport
+        setViewport,
+        setCanvasRef,
+        undo,
+        redo
     } = useWhiteboard();
 
     // Initialize canvas
@@ -49,6 +53,65 @@ const Whiteboard = () => {
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
     }, []);
+
+    // Register canvas with context for export
+    useEffect(() => {
+        if (canvasRef.current) {
+            setCanvasRef(canvasRef.current);
+        }
+    }, [setCanvasRef]);
+
+    // Keyboard shortcuts
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            // Ignore if typing in input field
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+            // Tool shortcuts (only if not using Ctrl/Cmd)
+            if (!e.ctrlKey && !e.metaKey) {
+                switch (e.key.toLowerCase()) {
+                    case 'p':
+                        setActiveTool('pen');
+                        break;
+                    case 'e':
+                        setActiveTool('eraser');
+                        break;
+                    case 's':
+                    case 'v':
+                        setActiveTool('select');
+                        break;
+                    case 'r':
+                        setActiveTool('rectangle');
+                        break;
+                    case 'c':
+                        setActiveTool('circle');
+                        break;
+                    case 'l':
+                        setActiveTool('line');
+                        break;
+                    case 'a':
+                        setActiveTool('arrow');
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            // Undo/Redo with Ctrl/Cmd
+            if (e.ctrlKey || e.metaKey) {
+                if (e.key === 'z' && !e.shiftKey) {
+                    e.preventDefault();
+                    undo();
+                } else if (e.key === 'y' || (e.key === 'z' && e.shiftKey)) {
+                    e.preventDefault();
+                    redo();
+                }
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [setActiveTool, undo, redo]);
 
     // Redraw canvas whenever elements change
     useEffect(() => {
@@ -221,6 +284,18 @@ const Whiteboard = () => {
         ctx.restore();
     };
 
+    const drawImage = (ctx, element) => {
+        const img = new Image();
+        img.onload = () => {
+            ctx.save();
+            ctx.globalAlpha = element.opacity || 1;
+            ctx.drawImage(img, element.x, element.y, element.width, element.height);
+            ctx.globalAlpha = 1;
+            ctx.restore();
+        };
+        img.src = element.src;
+    };
+
     const drawRuler = (ctx, ruler) => {
         ctx.save();
         ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
@@ -327,6 +402,13 @@ const Whiteboard = () => {
                 width: Math.abs(element.width),
                 height: Math.abs(element.height)
             };
+        } else if (element.type === 'image') {
+            bounds = {
+                x: element.x,
+                y: element.y,
+                width: element.width,
+                height: element.height
+            };
         }
 
         if (bounds) {
@@ -359,6 +441,8 @@ const Whiteboard = () => {
                 drawEquation(ctx, element);
             } else if (['rectangle', 'circle', 'line', 'arrow'].includes(element.type)) {
                 drawShape(ctx, element);
+            } else if (element.type === 'image') {
+                drawImage(ctx, element);
             }
         });
 
@@ -429,6 +513,13 @@ const Whiteboard = () => {
             // Add padding for easier selection
             return pos.x >= minX - 10 && pos.x <= maxX + 10 &&
                 pos.y >= minY - 10 && pos.y <= maxY + 10;
+        } else if (element.type === 'image') {
+            return pointInRect(pos.x, pos.y, {
+                x: element.x,
+                y: element.y,
+                width: element.width,
+                height: element.height
+            });
         }
         return false;
     };
