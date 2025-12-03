@@ -1,4 +1,4 @@
-# TLT Whiteboard - Release Notes
+# Cassini - Release Notes
 
 ## Version 1.3.0 - Shape Tools & Input Enhancement
 

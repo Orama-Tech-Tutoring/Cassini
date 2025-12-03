@@ -1,6 +1,6 @@
-# TLT Whiteboard
+# Cassini
 
-**Version 1.3.0** - Premium infinite whiteboard with AI assistance, shape tools, and stylus support
+**Version 1.3.1** - Premium infinite whiteboard with AI assistance, shape tools, and stylus support
 
 ## ✨ Features
 

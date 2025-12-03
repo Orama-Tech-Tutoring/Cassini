@@ -13,7 +13,7 @@ const Branding = () => {
             userSelect: 'none',
             letterSpacing: '0.5px'
         }}>
-            The Lab <span style={{ fontWeight: 700 }}>Whiteboard</span>
+            Cassini
         </div>
     );
 };
