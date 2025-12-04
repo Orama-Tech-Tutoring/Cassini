@@ -15,8 +15,10 @@ export const WhiteboardProvider = ({ children }) => {
     const [activeTool, setActiveTool] = useState('pen');
     const [toolProperties, setToolProperties] = useState({
         color: '#007AFF',
+        fillColor: '#007AFF',
         thickness: 3,
         opacity: 1,
+        fillOpacity: 0.5,
         fontSize: 16,
         fontFamily: 'Inter'
     });
@@ -36,12 +38,24 @@ export const WhiteboardProvider = ({ children }) => {
     // Modals
     const [showEquationModal, setShowEquationModal] = useState(false);
     const [showTextModal, setShowTextModal] = useState(false);
+    const [showBackgroundModal, setShowBackgroundModal] = useState(false);
 
     // Viewport state for Infinite Canvas
     const [viewport, setViewport] = useState({ x: 0, y: 0, scale: 1 });
 
     // Canvas reference for export
     const [canvasRef, setCanvasRef] = useState(null);
+
+    // Clipboard for copy/paste
+    const [clipboard, setClipboard] = useState([]);
+
+    // Background and grid settings
+    const [background, setBackground] = useState({
+        gridType: 'none', // 'none' | 'dots' | 'lines' | 'squares'
+        gridSize: 40,
+        gridColor: 'rgba(200, 200, 200, 0.3)',
+        backgroundColor: '#1a1a1a' // Dark background to match Liquid Glass aesthetic
+    });
 
     const zoomIn = useCallback(() => {
         setViewport(prev => ({ ...prev, scale: Math.min(prev.scale * 1.1, 5) }));
@@ -157,6 +171,61 @@ export const WhiteboardProvider = ({ children }) => {
         input.click();
     }, [addElement]);
 
+    // Clipboard operations
+    const copyElements = useCallback((elementsToCopy) => {
+        setClipboard(elementsToCopy.map(el => ({ ...el })));
+    }, []);
+
+    const pasteElements = useCallback(() => {
+        if (clipboard.length === 0) return;
+
+        const pastedElements = clipboard.map(el => ({
+            ...el,
+            id: Date.now() + Math.random(), // New ID
+            x: el.x + 20, // Offset for visibility
+            y: el.y + 20
+        }));
+
+        setElements(prev => {
+            const newElements = [...prev, ...pastedElements];
+            setHistory(h => [...h.slice(0, historyStep + 1), newElements]);
+            setHistoryStep(s => s + 1);
+            return newElements;
+        });
+
+        return pastedElements;
+    }, [clipboard, historyStep]);
+
+    const duplicateElements = useCallback((elementsToDup) => {
+        const duplicated = elementsToDup.map(el => ({
+            ...el,
+            id: Date.now() + Math.random(),
+            x: el.x + 20,
+            y: el.y + 20
+        }));
+
+        setElements(prev => {
+            const newElements = [...prev, ...duplicated];
+            setHistory(h => [...h.slice(0, historyStep + 1), newElements]);
+            setHistoryStep(s => s + 1);
+            return newElements;
+        });
+
+        return duplicated;
+    }, [historyStep]);
+
+    const selectAll = useCallback(() => {
+        return elements;
+    }, [elements]);
+
+    const deselectAll = useCallback(() => {
+        return [];
+    }, []);
+
+    const updateBackground = useCallback((settings) => {
+        setBackground(prev => ({ ...prev, ...settings }));
+    }, []);
+
     const value = {
         activeTool,
         setActiveTool,
@@ -190,7 +259,16 @@ export const WhiteboardProvider = ({ children }) => {
         canvasRef,
         setCanvasRef,
         exportCanvasPNG,
-        importImage
+        importImage,
+        copyElements,
+        pasteElements,
+        duplicateElements,
+        selectAll,
+        deselectAll,
+        background,
+        updateBackground,
+        showBackgroundModal,
+        setShowBackgroundModal
     };
 
     return (

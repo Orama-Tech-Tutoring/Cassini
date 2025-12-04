@@ -17,7 +17,9 @@ import {
     Minus,
     ArrowRight,
     Download,
-    Upload
+    Upload,
+    Grid,
+    ArrowLeftRight
 } from 'lucide-react';
 
 const Toolbar = () => {
@@ -31,10 +33,12 @@ const Toolbar = () => {
         clearCanvas,
         setShowTextModal,
         exportCanvasPNG,
-        importImage
+        importImage,
+        setShowBackgroundModal
     } = useWhiteboard();
 
     const [isCollapsed, setIsCollapsed] = useState(false);
+    const [toolbarOrientation, setToolbarOrientation] = useState('horizontal'); // 'horizontal' or 'vertical'
 
     const tools = [
         { id: 'pen', icon: Pen, label: 'Pen' },
@@ -65,22 +69,31 @@ const Toolbar = () => {
     return (
         <div style={{
             position: 'absolute',
-            top: 20,
-            left: '50%',
-            transform: 'translateX(-50%)',
+            ...(toolbarOrientation === 'horizontal' ? {
+                top: 20,
+                left: '50%',
+                transform: 'translateX(-50%)'
+            } : {
+                top: '50%',
+                left: 20,
+                transform: 'translateY(-50%)'
+            }),
             zIndex: 1000,
             display: 'flex',
-            flexDirection: 'column',
+            flexDirection: toolbarOrientation === 'horizontal' ? 'column' : 'row',
             alignItems: 'center',
             gap: '8px'
         }}>
             <div className="glass" style={{
-                padding: '12px',
-                borderRadius: 'var(--radius-xl)',
+                padding: toolbarOrientation === 'horizontal' ? '6px' : '4px',
+                borderRadius: 'var(--radius-lg)',
                 display: 'flex',
-                gap: '8px',
+                flexDirection: toolbarOrientation === 'horizontal' ? 'row' : 'column',
+                gap: toolbarOrientation === 'horizontal' ? '4px' : '2px',
                 alignItems: 'center',
-                transition: 'all 0.3s ease'
+                transition: 'all 0.3s ease',
+                maxHeight: toolbarOrientation === 'vertical' ? '90vh' : 'none',
+                overflowY: toolbarOrientation === 'vertical' ? 'auto' : 'visible'
             }}>
                 {/* Collapse Toggle */}
                 <button
@@ -88,17 +101,37 @@ const Toolbar = () => {
                     onClick={() => setIsCollapsed(!isCollapsed)}
                     title={isCollapsed ? "Expand Toolbar" : "Collapse Toolbar"}
                     style={{
-                        width: '32px',
-                        height: '32px',
+                        width: toolbarOrientation === 'horizontal' ? '28px' : '24px',
+                        height: toolbarOrientation === 'horizontal' ? '28px' : '24px',
                         padding: '4px',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        marginRight: isCollapsed ? 0 : '8px'
+                        marginRight: isCollapsed ? 0 : (toolbarOrientation === 'horizontal' ? '5px' : '0')
                     }}
                 >
                     {isCollapsed ? <ChevronDown size={16} /> : <ChevronUp size={16} />}
                 </button>
+
+                {/* Orientation Toggle */}
+                {!isCollapsed && (
+                    <button
+                        className="glass-button"
+                        onClick={() => setToolbarOrientation(prev => prev === 'horizontal' ? 'vertical' : 'horizontal')}
+                        title={`Switch to ${toolbarOrientation === 'horizontal' ? 'Vertical' : 'Horizontal'}`}
+                        style={{
+                            width: toolbarOrientation === 'horizontal' ? '28px' : '24px',
+                            height: toolbarOrientation === 'horizontal' ? '28px' : '24px',
+                            padding: '4px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            marginRight: toolbarOrientation === 'horizontal' ? '5px' : '0'
+                        }}
+                    >
+                        <ArrowLeftRight size={16} />
+                    </button>
+                )}
 
                 {!isCollapsed && (
                     <>
@@ -112,15 +145,15 @@ const Toolbar = () => {
                                     onClick={() => handleToolClick(tool)}
                                     title={tool.label}
                                     style={{
-                                        width: '40px',
-                                        height: '40px',
-                                        padding: '8px',
+                                        width: toolbarOrientation === 'horizontal' ? '40px' : '28px',
+                                        height: toolbarOrientation === 'horizontal' ? '40px' : '28px',
+                                        padding: toolbarOrientation === 'horizontal' ? '8px' : '5px',
                                         display: 'flex',
                                         alignItems: 'center',
                                         justifyContent: 'center'
                                     }}
                                 >
-                                    <Icon size={20} />
+                                    <Icon size={toolbarOrientation === 'horizontal' ? 20 : 14} />
                                 </button>
                             );
                         })}
@@ -181,6 +214,57 @@ const Toolbar = () => {
                             background: 'rgba(255, 255, 255, 0.2)',
                             margin: '0 4px'
                         }} />
+
+                        {/* Fill Color Picker (compact, only for shapes) */}
+                        {['rectangle', 'circle'].includes(activeTool) && (
+                            <>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', padding: '0 4px', minWidth: '90px' }}>
+                                    <label style={{ fontSize: '9px', color: 'rgba(255, 255, 255, 0.7)' }}>
+                                        Fill: {Math.round(toolProperties.fillOpacity * 100)}%
+                                    </label>
+                                    <div style={{ display: 'flex', gap: '3px', alignItems: 'center' }}>
+                                        {colors.slice(0, 3).map(color => (
+                                            <button
+                                                key={color}
+                                                onClick={() => updateToolProperty('fillColor', color)}
+                                                style={{
+                                                    width: '16px',
+                                                    height: '16px',
+                                                    borderRadius: '50%',
+                                                    background: color,
+                                                    border: toolProperties.fillColor === color
+                                                        ? '2px solid white'
+                                                        : '1px solid rgba(255, 255, 255, 0.3)',
+                                                    cursor: 'pointer',
+                                                    transition: 'all var(--transition-fast)'
+                                                }}
+                                                title={color}
+                                            />
+                                        ))}
+                                        <input
+                                            type="range"
+                                            min="0"
+                                            max="1"
+                                            step="0.1"
+                                            value={toolProperties.fillOpacity}
+                                            onChange={(e) => updateToolProperty('fillOpacity', parseFloat(e.target.value))}
+                                            style={{
+                                                width: '55px',
+                                                cursor: 'pointer'
+                                            }}
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* Divider */}
+                                <div style={{
+                                    width: '1px',
+                                    height: '40px',
+                                    background: 'rgba(255, 255, 255, 0.2)',
+                                    margin: '0 4px'
+                                }} />
+                            </>
+                        )}
 
                         {/* Thickness Slider */}
                         <div style={{
@@ -322,6 +406,21 @@ const Toolbar = () => {
                             }}
                         >
                             <Upload size={20} />
+                        </button>
+                        <button
+                            className="glass-button"
+                            onClick={() => setShowBackgroundModal(true)}
+                            title="Background & Grid"
+                            style={{
+                                width: '40px',
+                                height: '40px',
+                                padding: '8px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center'
+                            }}
+                        >
+                            <Grid size={20} />
                         </button>
                     </>
                 )}

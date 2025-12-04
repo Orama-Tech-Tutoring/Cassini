@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useState } from 'react';
 import { useWhiteboard } from '../context/WhiteboardContext';
 import { snapToRulerEdge, pointInRect } from '../utils/geometry';
 import SelectionActionMenu from './SelectionActionMenu';
+import SelectionIndicator from './SelectionIndicator';
 
 const Whiteboard = () => {
     const canvasRef = useRef(null);
@@ -33,7 +34,13 @@ const Whiteboard = () => {
         setViewport,
         setCanvasRef,
         undo,
-        redo
+        redo,
+        copyElements,
+        pasteElements,
+        duplicateElements,
+        selectAll,
+        deselectAll,
+        background
     } = useWhiteboard();
 
     // Initialize canvas
@@ -105,18 +112,39 @@ const Whiteboard = () => {
                 } else if (e.key === 'y' || (e.key === 'z' && e.shiftKey)) {
                     e.preventDefault();
                     redo();
+                } else if (e.key === 'c' && selectedElements.length > 0) {
+                    e.preventDefault();
+                    copyElements(selectedElements);
+                } else if (e.key === 'v') {
+                    e.preventDefault();
+                    const pasted = pasteElements();
+                    if (pasted) {
+                        setSelectedElements(pasted);
+                    }
+                } else if (e.key === 'd' && selectedElements.length > 0) {
+                    e.preventDefault();
+                    const duplicated = duplicateElements(selectedElements);
+                    setSelectedElements(duplicated);
+                } else if (e.key === 'a') {
+                    e.preventDefault();
+                    setSelectedElements(selectAll());
                 }
+            }
+
+            // Escape to deselect
+            if (e.key === 'Escape') {
+                setSelectedElements(deselectAll());
             }
         };
 
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [setActiveTool, undo, redo]);
+    }, [setActiveTool, undo, redo, selectedElements, copyElements, pasteElements, duplicateElements, selectAll, deselectAll]);
 
     // Redraw canvas whenever elements change
     useEffect(() => {
         redrawCanvas();
-    }, [elements, ruler, protractor, selectedElements, selectionBox, viewport, currentShape]);
+    }, [elements, ruler, protractor, selectedElements, selectionBox, viewport, background, currentShape]);
 
     // Handle Zoom
     useEffect(() => {
@@ -241,6 +269,14 @@ const Whiteboard = () => {
         ctx.lineJoin = 'round';
 
         if (element.type === 'rectangle') {
+            // Draw fill if present
+            if (element.fillColor && element.fillOpacity > 0) {
+                ctx.fillStyle = element.fillColor;
+                ctx.globalAlpha = element.fillOpacity;
+                ctx.fillRect(element.x, element.y, element.width, element.height);
+                ctx.globalAlpha = 1;
+            }
+            // Draw stroke
             ctx.strokeRect(element.x, element.y, element.width, element.height);
         } else if (element.type === 'circle') {
             ctx.beginPath();
@@ -251,6 +287,14 @@ const Whiteboard = () => {
                 Math.abs(element.height / 2),
                 0, 0, 2 * Math.PI
             );
+            // Draw fill if present
+            if (element.fillColor && element.fillOpacity > 0) {
+                ctx.fillStyle = element.fillColor;
+                ctx.globalAlpha = element.fillOpacity;
+                ctx.fill();
+                ctx.globalAlpha = 1;
+            }
+            // Draw stroke
             ctx.stroke();
         } else if (element.type === 'line') {
             ctx.beginPath();
@@ -420,12 +464,67 @@ const Whiteboard = () => {
         }
     };
 
+    const drawGrid = (ctx) => {
+        if (background.gridType === 'none') return;
+
+        const { gridType, gridSize, gridColor } = background;
+        const width = canvasRef.current.width;
+        const height = canvasRef.current.height;
+
+        ctx.save();
+        ctx.strokeStyle = gridColor;
+        ctx.fillStyle = gridColor;
+
+        if (gridType === 'dots') {
+            // Draw dots at grid intersections
+            for (let x = gridSize; x < width; x += gridSize) {
+                for (let y = gridSize; y < height; y += gridSize) {
+                    ctx.beginPath();
+                    ctx.arc(x, y, 1.5, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+        } else if (gridType === 'lines') {
+            // Draw vertical and horizontal lines
+            ctx.lineWidth = 0.5;
+            for (let x = gridSize; x < width; x += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, height);
+                ctx.stroke();
+            }
+            for (let y = gridSize; y < height; y += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(width, y);
+                ctx.stroke();
+            }
+        } else if (gridType === 'squares') {
+            // Draw grid of square outlines
+            ctx.lineWidth = 0.5;
+            for (let x = 0; x < width; x += gridSize) {
+                for (let y = 0; y < height; y += gridSize) {
+                    ctx.strokeRect(x, y, gridSize, gridSize);
+                }
+            }
+        }
+
+        ctx.restore();
+    };
+
     const redrawCanvas = () => {
         const canvas = canvasRef.current;
         if (!canvas) return;
 
         const ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Draw background color
+        ctx.fillStyle = background.backgroundColor;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Draw grid (before viewport transformations)
+        drawGrid(ctx);
 
         ctx.save();
         ctx.translate(viewport.x, viewport.y);
@@ -625,7 +724,9 @@ const Whiteboard = () => {
                 startY: pos.y,
                 color: toolProperties.color,
                 thickness: toolProperties.thickness,
-                opacity: toolProperties.opacity
+                opacity: toolProperties.opacity,
+                fillColor: toolProperties.fillColor,
+                fillOpacity: toolProperties.fillOpacity
             });
         }
     };
@@ -852,6 +953,7 @@ const Whiteboard = () => {
                     position={getActionMenuPosition()}
                 />
             )}
+            <SelectionIndicator count={selectedElements.length} />
         </>
     );
 };

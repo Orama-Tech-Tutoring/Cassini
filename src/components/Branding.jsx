@@ -13,7 +13,16 @@ const Branding = () => {
             userSelect: 'none',
             letterSpacing: '0.5px'
         }}>
-            Cassini
+            <img
+                src="/logo.png"
+                alt="Cassini"
+                style={{
+                    height: '20px',
+                    width: 'auto',
+                    objectFit: 'contain',
+                    filter: 'brightness(0) invert(1) opacity(0.6)'
+                }}
+            />
         </div>
     );
 };

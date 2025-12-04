@@ -3,6 +3,7 @@ import { WhiteboardProvider } from './context/WhiteboardContext';
 import Whiteboard from './components/Whiteboard';
 import Toolbar from './components/Toolbar';
 import TextModal from './components/TextModal';
+import BackgroundModal from './components/BackgroundModal';
 import Branding from './components/Branding';
 import ChatSidebar from './components/ChatSidebar';
 import './App.css';
@@ -14,6 +15,7 @@ function App() {
             <Toolbar />
             <ChatSidebar />
             <TextModal />
+            <BackgroundModal />
             <Branding />
         </WhiteboardProvider>
     );
