@@ -53,7 +53,7 @@
 - **Multi-Select** - Shift+click for multiple elements
 - **Drag to Move** - Immediate element repositioning
 - **Selection Indicator** - Shows "{count} selected" (NEW in v1.4.2)
-- **Undo/Redo** - Full history support
+- **Undo/Redo** - Full history support, **except when clearing the whole whiteboard**
 
 ## 🚀 Quick Start
 
