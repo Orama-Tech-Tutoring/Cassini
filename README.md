@@ -44,7 +44,7 @@
 
 ### AI Assistant
 
-- **Gemini Chat** - Built-in AI powered by Google Gemini
+- **Gemini Chat** - Built-in AI powered by Google Gemini (key required)
 - **Collapsible Sidebar** - Minimize for maximum drawing space
 
 ### Selection & Editing
