@@ -1,5 +1,84 @@
 # Cassini - Release Notes
 
+## Version 1.4.2 - Grid, Background & Layout Flexibility
+
+**Release Date:** December 4, 2024
+
+### 🚀 New Features
+
+#### Grid & Background System
+
+- ✅ **Grid Patterns** - Three grid types: Dots, Lines, and Squares
+- ✅ **Adjustable Grid Size** - Slider control from 10px to 100px spacing
+- ✅ **Canvas Background Colors** - 5 preset colors (#ffffff, #f0f0f0, #e0e0e0, #1a1a1a, #2d2d2d) + custom color picker
+- ✅ **Grid Toggle** - Easily show/hide grid patterns
+- ✅ **Background Settings Modal** - Dedicated UI for all customization options
+- ✅ **Default Dark Background** - Changed from white to #1a1a1a for better glass UI visibility
+
+#### UI Enhancements
+
+- ✅ **Selection Count Indicator** - Shows "{number} selected" in bottom-left corner
+- ✅ **Vertical Toolbar Option** - Toggle between horizontal (top-center) and vertical (left-center) layouts
+- ✅ **Compact Vertical Mode** - Optimized button sizes (28px) and spacing (2px gaps) for vertical orientation
+- ✅ **Logo Branding** - Replaced text branding with customizable logo image
+
+### 🔧 Technical Improvements
+
+- **Grid Rendering:** Pre-viewport transformation rendering for fixed canvas-space grid
+- **Background State Management:** Centralized in WhiteboardContext (gridType, gridSize, gridColor, backgroundColor)
+- **Toolbar Flexibility:** Dynamic positioning and sizing based on orientation state
+- **Component Architecture:** Two new components (BackgroundModal, SelectionIndicator)
+
+### 🐛 Bug Fixes
+
+- Fixed `Grid3x3` icon import (changed to `Grid`)
+- Fixed `SwitchHorizontal` icon import (changed to `ArrowLeftRight`)
+- Added `background` to redrawCanvas dependency array for proper re-rendering
+- Changed default background from white to dark gray to prevent invisible UI elements
+
+### 📦 Components Created
+
+- **BackgroundModal.jsx** - Grid and background customization modal
+- **SelectionIndicator.jsx** - Selection count display component
+
+### 🎨 Design Updates
+
+- Maintained Liquid Glass aesthetic with new background customization
+- Grid patterns designed for minimal visual interference
+- Compact vertical toolbar preserves screen space
+
+---
+
+## Version 1.4.1 - Fill Colors & Clipboard Operations
+
+**Release Date:** December 3, 2024  
+*Minor update with essential editing features*
+
+### 🚀 New Features
+
+- ✅ **Shape Fill Colors** - Customizable fill color and opacity for rectangles and circles
+- ✅ **Clipboard Operations**:
+  - Copy elements (Ctrl+C)
+  - Paste elements (Ctrl+V)
+  - Duplicate elements (Ctrl+D)
+  - Select all (Ctrl+A)
+  - Deselect (Esc)
+
+---
+
+## Version 1.4.0 - Performance & Stability
+
+**Release Date:** December 3, 2024  
+*Minor update focusing on optimization*
+
+### 🔧 Improvements
+
+- Performance optimizations across rendering pipeline
+- Code cleanup and refactoring
+- Bug fixes and stability improvements
+
+---
+
 ## Version 1.3.2 - Export, Import & Keyboard Shortcuts
 
 **Release Date:** December 3, 2025
