@@ -71,7 +71,7 @@ This license shall be governed by and construed in accordance with the laws of t
 
 ---
 
-## Quick Summary (Not Legal Advice)
+## Quick Summary
 
 ✅ **You CAN:**
 
