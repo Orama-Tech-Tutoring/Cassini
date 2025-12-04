@@ -28,4 +28,4 @@ SOFTWARE.
 Any questions OR inquires must be sent to the contact information:
 
 The Lab Tutoring & Technologies //
-[bhsthelab.wixsite.com/ontheweb](url)
+Website: bhsthelab.wixsite.com/ontheweb
