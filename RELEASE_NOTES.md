@@ -1,5 +1,53 @@
 # Cassini - Release Notes
 
+## Version 1.4.3 - AI Chat Markdown & Formatting
+
+**Release Date:** December 4, 2024
+
+### 🚀 New Features
+
+#### AI Chat Enhancements
+
+- ✅ **Markdown Rendering** - AI responses now display with proper markdown formatting
+  - Headings (H1, H2, H3) with proper sizing and spacing
+  - Bold, italic, and code formatting
+  - Bullet and numbered lists
+  - Blockquotes with left border
+  - Hyperlinks with target="_blank"
+- ✅ **Code Syntax Highlighting** - Code blocks render with atomDark theme
+  - Inline code with background highlighting
+  - Multi-line code blocks with language-specific syntax highlighting
+  - Proper monospace font rendering
+- ✅ **Custom System Instructions** - Configurable AI personality
+  - Added systemInstruction to Gemini API calls
+  - Default: Helpful assistant for Cassini whiteboard
+  - Instructs AI to format responses in markdown
+- ✅ **Improved Typography** - Better readability in chat messages
+  - Optimized line height (1.6) for markdown content
+  - Consistent spacing between elements
+  - Proper color contrast for readability
+
+### 🔧 Technical Improvements
+
+- **Dependencies Added:**
+  - `react-markdown` - Core markdown parsing and rendering
+  - `remark-gfm` - GitHub Flavored Markdown support
+  - `react-syntax-highlighter` - Code syntax highlighting
+- **Component Architecture:** New MarkdownRenderer component with custom styled elements
+- **API Enhancement:** System instruction field added to geminiService.js
+
+### 📦 Components Created
+
+- **MarkdownRenderer.jsx** - Markdown parser with syntax highlighting and custom styles
+
+### 🎨 Design Updates
+
+- Maintained Liquid Glass aesthetic in chat interface
+- Code blocks styled to match application theme
+- Smooth integration with existing chat bubble design
+
+---
+
 ## Version 1.4.2 - Grid, Background & Layout Flexibility
 
 **Release Date:** December 4, 2024

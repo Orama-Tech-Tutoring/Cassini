@@ -1,6 +1,6 @@
 
 // Gemini API Key
-export const GEMINI_API_KEY = 'AIzaSyDJ3iasAbPdv_aTfex276nc-Q_6oh8KZhc';
+export const GEMINI_API_KEY = 'AIzaSyB-7kyxHitjuR89qN-5QsXnbG085TH_Maw';
 
 const API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent';
 
@@ -28,7 +28,12 @@ export const sendMessageToGemini = async (message, history = []) => {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                contents: contents
+                contents: contents,
+                systemInstruction: {
+                    parts: [{
+                        text: "You are a helpful AI assistant for Cassini, a premium infinite whiteboard application. You help users with drawing, design, creative tasks, and general questions. Be concise, friendly, and format your responses in markdown for better readability. Use code blocks for technical examples, bullet points for lists, and proper formatting for clarity."
+                    }]
+                }
             })
         });
 

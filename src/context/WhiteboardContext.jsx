@@ -161,7 +161,9 @@ export const WhiteboardProvider = ({ children }) => {
                         width: img.width,
                         height: img.height,
                         originalWidth: img.width,
-                        originalHeight: img.height
+                        originalHeight: img.height,
+                        opacity: 1,
+                        rotation: 0
                     });
                 };
                 img.src = event.target.result;

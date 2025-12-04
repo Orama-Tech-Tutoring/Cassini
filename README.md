@@ -1,6 +1,6 @@
 # Cassini
 
-**Version 1.4.2** - Premium infinite whiteboard with AI assistance, customizable backgrounds, and flexible layouts
+**Version 1.4.3** - Premium infinite whiteboard with AI assistance, markdown chat, and flexible layouts
 
 ## ✨ Features
 
@@ -80,20 +80,28 @@ Apple "Liquid Glass" aesthetic with glassmorphism effects, smooth animations, an
 - Lucide React Icons
 - Google Gemini API
 
-## 📝 What's New in v1.4.2
+## 📝 What's New in v1.4.3
 
-- **Grid & Background System**: Customizable grid patterns (dots, lines, squares) with adjustable size
-- **Canvas Background Colors**: 5 presets + custom color picker
-- **Selection Count Indicator**: Visual feedback showing number of selected elements
-- **Vertical Toolbar Option**: Toggle between horizontal (top) and vertical (left) layouts
-- **Logo Branding**: Customizable logo display
-- **Compact Vertical Mode**: Optimized button sizes for vertical toolbar layout
+- **Markdown Chat Formatting**: AI responses now render with proper markdown including headings, lists, bold, italic, and links
+- **Code Syntax Highlighting**: Code blocks in chat with beautiful syntax highlighting  
+- **Custom AI Instructions**: Configure system prompt for personalized AI behavior
+- **Improved Chat Typography**: Better readability and spacing in conversation
 
-### Minor Updates (v1.4.0 - v1.4.1)
+### Recent Updates
 
-- **Fill Colors**: Shape fill with opacity control (v1.4.1)
-- **Clipboard Operations**: Copy, paste, duplicate, select all (v1.4.1)
-- **Performance Improvements**: Various optimizations (v1.4.0)
+**v1.4.2 - Background & Grid:**
+
+- Grid patterns (dots, lines, squares) with adjustable size
+- Canvas background colors with color picker
+- Selection count indicator  
+- Vertical toolbar option
+- Logo branding
+
+**v1.4.0 - v1.4.1:**
+
+- Fill colors for shapes (v1.4.1)
+- Clipboard operations (v1.4.1)
+- Performance improvements (v1.4.0)
 
 [View Full Release Notes →](./RELEASE_NOTES.md)
 

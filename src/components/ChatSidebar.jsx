@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, Bot, User, AlertCircle, X } from 'lucide-react';
 import { sendMessageToGemini, GEMINI_API_KEY } from '../services/geminiService';
+import MarkdownRenderer from './MarkdownRenderer';
 
 const ChatSidebar = () => {
     const [isOpen, setIsOpen] = useState(true);
@@ -173,7 +174,11 @@ const ChatSidebar = () => {
                             borderBottomRightRadius: msg.role === 'user' ? '4px' : '16px',
                             borderBottomLeftRadius: msg.role === 'model' ? '4px' : '16px'
                         }}>
-                            {msg.content}
+                            {msg.role === 'model' ? (
+                                <MarkdownRenderer content={msg.content} />
+                            ) : (
+                                msg.content
+                            )}
                         </div>
                     </div>
                 ))}
