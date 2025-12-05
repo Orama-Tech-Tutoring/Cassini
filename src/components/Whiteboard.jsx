@@ -238,11 +238,71 @@ const Whiteboard = () => {
     };
 
     const drawText = (ctx, element) => {
-        ctx.font = `${element.fontSize}px ${element.fontFamily}`;
-        ctx.fillStyle = element.color;
+        ctx.save();
         ctx.globalAlpha = element.opacity || 1;
-        ctx.fillText(element.text, element.x, element.y);
-        ctx.globalAlpha = 1;
+
+        // Build font string with bold/italic
+        const fontWeight = element.bold ? 'bold' : 'normal';
+        const fontStyle = element.italic ? 'italic' : 'normal';
+        ctx.font = `${fontStyle} ${fontWeight} ${element.fontSize}px ${element.fontFamily}`;
+        ctx.fillStyle = element.color;
+
+        // Handle multi-line text
+        const lines = element.text.split('\n');
+        const lineHeight = element.fontSize * 1.2;
+
+        // Measure text for background and alignment
+        let maxWidth = 0;
+        lines.forEach(line => {
+            const metrics = ctx.measureText(line);
+            maxWidth = Math.max(maxWidth, metrics.width);
+        });
+        const totalHeight = lines.length * lineHeight;
+
+        // Draw background if present
+        if (element.backgroundColor) {
+            ctx.fillStyle = element.backgroundColor;
+            const padding = 8;
+            ctx.fillRect(
+                element.x - padding,
+                element.y - element.fontSize - padding,
+                maxWidth + padding * 2,
+                totalHeight + padding * 2
+            );
+            ctx.fillStyle = element.color; // Reset fill color for text
+        }
+
+        // Draw each line
+        lines.forEach((line, index) => {
+            let xPos = element.x;
+
+            // Handle text alignment
+            if (element.textAlign === 'center') {
+                const lineWidth = ctx.measureText(line).width;
+                xPos = element.x + (maxWidth - lineWidth) / 2;
+            } else if (element.textAlign === 'right') {
+                const lineWidth = ctx.measureText(line).width;
+                xPos = element.x + maxWidth - lineWidth;
+            }
+
+            const yPos = element.y + (index * lineHeight);
+
+            // Draw text
+            ctx.fillText(line, xPos, yPos);
+
+            // Draw underline if enabled
+            if (element.underline) {
+                const lineWidth = ctx.measureText(line).width;
+                ctx.beginPath();
+                ctx.strokeStyle = element.color;
+                ctx.lineWidth = Math.max(1, element.fontSize / 15);
+                ctx.moveTo(xPos, yPos + 3);
+                ctx.lineTo(xPos + lineWidth, yPos + 3);
+                ctx.stroke();
+            }
+        });
+
+        ctx.restore();
     };
 
     const drawEquation = (ctx, element) => {

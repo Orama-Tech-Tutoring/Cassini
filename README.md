@@ -108,6 +108,13 @@ Apple "Liquid Glass" aesthetic with glassmorphism effects, smooth animations, an
 - **Z-Order Controls**: Bring to front / Send to back
 - **Delete Button**: Moved to selection toolbar with element count
 
+### v1.4.4 - Text Formatting
+
+- **Bold/Italic/Underline** - Text style toggles
+- **Text Alignment** - Left, Center, Right alignment
+- **Multi-line Text** - Line breaks in text elements
+- **Text Background** - Optional colored background with 8 presets + custom
+
 ### v1.4.3b - Image Manipulation
 
 - 8-point resize handles on images/shapes

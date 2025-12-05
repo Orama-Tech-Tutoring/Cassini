@@ -36,6 +36,29 @@
 
 ---
 
+## Version 1.4.4 - Text Formatting
+
+**Release Date:** December 5, 2024
+
+### 🚀 New Features
+
+#### Text Styling
+
+- ✅ **Bold/Italic/Underline** - Toggle buttons in TextModal
+- ✅ **Text Alignment** - Left, Center, Right options
+- ✅ **Multi-line Text** - Support for line breaks (\n)
+- ✅ **Text Background** - Optional colored background
+  - 8 preset colors + custom color picker
+
+### 🔧 Technical Improvements
+
+- Enhanced `drawText()` function with formatting support
+- Font construction: `${fontStyle} ${fontWeight} ${fontSize}px ${fontFamily}`
+- Canvas underline drawing for underlined text
+- Background rectangle rendering with padding
+
+---
+
 ## Version 1.4.3b - Image Manipulation & Transforms
 
 **Release Date:** December 5, 2024
