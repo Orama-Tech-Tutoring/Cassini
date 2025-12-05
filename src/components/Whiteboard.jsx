@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { useWhiteboard } from '../context/WhiteboardContext';
 import { snapToRulerEdge, pointInRect } from '../utils/geometry';
-import SelectionActionMenu from './SelectionActionMenu';
+import SelectionToolbar from './SelectionToolbar';
 import SelectionIndicator from './SelectionIndicator';
 
 const Whiteboard = () => {
@@ -1180,10 +1180,10 @@ const Whiteboard = () => {
                 }}
             />
             {selectedElements.length > 0 && (
-                <SelectionActionMenu
+                <SelectionToolbar
                     selectedElements={selectedElements}
                     onDelete={handleDeleteSelected}
-                    position={getActionMenuPosition()}
+                    onUpdateElements={(id, updates) => updateElement(id, updates)}
                 />
             )}
             <SelectionIndicator count={selectedElements.length} />

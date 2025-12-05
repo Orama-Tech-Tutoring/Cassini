@@ -1,6 +1,6 @@
 # Cassini
 
-**Version 1.4.3b** - Premium infinite whiteboard with AI chat, image manipulation, and flexible layouts
+**Version 1.4.5** - Premium infinite whiteboard with AI chat, selection tools, and flexible layouts
 
 ## ✨ Features
 
@@ -100,19 +100,24 @@ Apple "Liquid Glass" aesthetic with glassmorphism effects, smooth animations, an
 - Lucide React Icons
 - Google Gemini API
 
-## 📝 What's New in v1.4.3b
+## 📝 What's New in v1.4.5
 
-- **Image Resize Handles**: 8-point resize handles on selected images/shapes
-- **Image Rotation**: Orange rotation handle for free rotation of elements
-- **Aspect Ratio Lock**: Maintains proportions during resize (enabled by default)
-- **Real-time Selection Updates**: Selection box syncs with element during transforms
-- **Zoom Safety**: Fixed zoom out issues with position validation
+- **Selection Toolbar**: Fixed-position toolbar at bottom-right (no longer blocks elements)
+- **Alignment Tools**: Align left/center/right and top/middle/bottom (2+ elements)
+- **Distribute Evenly**: Space elements horizontally/vertically (3+ elements)
+- **Z-Order Controls**: Bring to front / Send to back
+- **Delete Button**: Moved to selection toolbar with element count
+
+### v1.4.3b - Image Manipulation
+
+- 8-point resize handles on images/shapes
+- Rotation handle for free rotation
+- Aspect ratio lock during resize
 
 ### v1.4.3a - AI Chat Enhancements
 
 - Markdown chat formatting with syntax highlighting
 - Custom AI instructions via system prompt
-- Improved chat typography
 
 ### Recent Updates
 

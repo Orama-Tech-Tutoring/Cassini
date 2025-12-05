@@ -1,5 +1,41 @@
 # Cassini - Release Notes
 
+## Version 1.4.5 - Selection & Alignment Tools
+
+**Release Date:** December 5, 2024
+
+### 🚀 New Features
+
+#### Selection Toolbar (Fixed Position)
+
+- ✅ **Repositioned Delete Button** - Moved to fixed bottom-right toolbar
+  - No longer blocks view of selected elements
+  - Shows element count ("3 elements selected")
+- ✅ **Alignment Tools** - Align multiple elements with one click
+  - Horizontal: Left, Center, Right
+  - Vertical: Top, Middle, Bottom
+  - Only appears when 2+ elements selected
+- ✅ **Distribute Evenly** - Space elements with equal gaps
+  - Distribute Horizontally
+  - Distribute Vertically
+  - Only appears when 3+ elements selected
+- ✅ **Z-Order Controls** - Layer ordering
+  - Bring to Front
+  - Send to Back
+
+### 🔧 Technical Improvements
+
+- Created `SelectionToolbar.jsx` component with batch state updates
+- All alignment operations use single `setElements` call for performance
+- Replaced floating `SelectionActionMenu` with fixed-position toolbar
+
+### 📦 Component Changes
+
+- **[NEW]** `SelectionToolbar.jsx` - Fixed-position selection controls
+- **[DEPRECATED]** `SelectionActionMenu.jsx` - Replaced by SelectionToolbar
+
+---
+
 ## Version 1.4.3b - Image Manipulation & Transforms
 
 **Release Date:** December 5, 2024
