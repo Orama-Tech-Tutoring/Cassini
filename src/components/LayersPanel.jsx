@@ -105,15 +105,16 @@ const LayersPanel = ({ selectedElements, setSelectedElements, onDeleteElement })
                     right: 20,
                     top: '50%',
                     transform: 'translateY(-50%)',
-                    width: 40,
-                    height: 40,
+                    width: 56,
+                    height: 56,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    zIndex: 1000
+                    zIndex: 1000,
+                    borderRadius: '50%'
                 }}
             >
-                <Layers size={20} />
+                <Layers size={24} />
             </button>
         );
     }

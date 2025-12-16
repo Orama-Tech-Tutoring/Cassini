@@ -1,5 +1,15 @@
 # Cassini - Release Notes
 
+## Version 1.4.7.1 - UI Improvements
+
+**Release Date:** December 16, 2024
+
+### 🚀 Improvements
+
+- **Larger Layers Button** - Increased touch target size for layers panel toggle
+
+---
+
 ## Version 1.4.7 - Layers System
 
 **Release Date:** December 16, 2024

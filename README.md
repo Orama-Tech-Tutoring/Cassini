@@ -100,7 +100,11 @@ Apple "Liquid Glass" aesthetic with glassmorphism effects, smooth animations, an
 - Lucide React Icons
 - Google Gemini API
 
-## 📝 What's New in v1.4.7 - Layers System
+## 📝 What's New in v1.4.7.1
+
+- **Larger Layers Button** - Increased size of layer panel toggle for better accessibility
+
+### v1.4.7 - Layers System
 
 - **Layers Panel** - Click the layers icon (right side) to manage all elements
 - **Show/Hide Layers** - Eye icon toggles visibility
