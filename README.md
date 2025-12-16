@@ -152,4 +152,4 @@ Apple "Liquid Glass" aesthetic with glassmorphism effects, smooth animations, an
 
 ---
 
-**Built with ❤️ by The Lab Technologies**
+**Built with ❤️ by Orama Technologies**
