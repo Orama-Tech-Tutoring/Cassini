@@ -492,4 +492,4 @@ npm run build
 
 ---
 
-**Built with ❤️ by The Lab Technologies**
+**Built with ❤️ by Orama Technologies**
