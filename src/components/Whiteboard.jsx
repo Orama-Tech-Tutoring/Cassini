@@ -3,6 +3,7 @@ import { useWhiteboard } from '../context/WhiteboardContext';
 import { snapToRulerEdge, pointInRect } from '../utils/geometry';
 import SelectionToolbar from './SelectionToolbar';
 import SelectionIndicator from './SelectionIndicator';
+import LayersPanel from './LayersPanel';
 
 const Whiteboard = () => {
     const canvasRef = useRef(null);
@@ -141,6 +142,12 @@ const Whiteboard = () => {
             // Escape to deselect
             if (e.key === 'Escape') {
                 setSelectedElements(deselectAll());
+            }
+
+            // Shift+L for layers panel (L without shift is line tool)
+            if (e.shiftKey && e.key.toLowerCase() === 'l') {
+                e.preventDefault();
+                // LayersPanel handles its own toggle state
             }
         };
 
@@ -706,8 +713,8 @@ const Whiteboard = () => {
         ctx.translate(viewport.x, viewport.y);
         ctx.scale(viewport.scale, viewport.scale);
 
-        // Draw all elements
-        elements.forEach(element => {
+        // Draw all elements (filter out hidden ones)
+        elements.filter(el => el.visible !== false).forEach(element => {
             if (element.type === 'stroke') {
                 drawStroke(ctx, element);
             } else if (element.type === 'text') {
@@ -1253,6 +1260,11 @@ const Whiteboard = () => {
                 />
             )}
             <SelectionIndicator count={selectedElements.length} />
+            <LayersPanel
+                selectedElements={selectedElements}
+                setSelectedElements={setSelectedElements}
+                onDeleteElement={deleteElement}
+            />
         </>
     );
 };

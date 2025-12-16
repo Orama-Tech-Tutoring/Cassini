@@ -1,5 +1,30 @@
 # Cassini - Release Notes
 
+## Version 1.4.7 - Layers System
+
+**Release Date:** December 16, 2024
+
+### 🚀 New Features
+
+#### Layers Panel
+
+- ✅ **Collapsible Panel** - Click layers icon on right side to open
+- ✅ **Show/Hide Layers** - Eye icon toggles element visibility
+- ✅ **Drag Reorder** - Drag layers to change z-order
+- ✅ **Opacity Control** - Slider per layer for transparency
+- ✅ **Layer Naming** - Double-click to rename layers
+- ✅ **Quick Delete** - Delete layers from panel
+
+### 📦 Files Created
+
+- **[NEW]** `LayersPanel.jsx` - Complete layers management panel
+
+### 📦 Files Modified
+
+- **[UPDATE]** `Whiteboard.jsx` - Integrated LayersPanel, filter hidden elements
+
+---
+
 ## Version 1.4.6 - UI Revamp & Orama Branding
 
 **Release Date:** December 16, 2024

@@ -100,12 +100,20 @@ Apple "Liquid Glass" aesthetic with glassmorphism effects, smooth animations, an
 - Lucide React Icons
 - Google Gemini API
 
-## 📝 What's New in v1.4.6 - UI Revamp
+## 📝 What's New in v1.4.7 - Layers System
 
-- **Collapsible Toolbar Sections** - Draw, Shapes, Color, Settings panels that expand/collapse
-- **Responsive UI Scaling** - UI scales based on window size (mobile/tablet/desktop)
-- **Cleaner Organization** - Tools grouped logically, less visual clutter
-- **Orama Branding** - Updated to "Cassini by Orama"
+- **Layers Panel** - Click the layers icon (right side) to manage all elements
+- **Show/Hide Layers** - Eye icon toggles visibility
+- **Reorder Layers** - Drag and drop to change z-order
+- **Layer Opacity** - Slider per layer for transparency control
+- **Layer Naming** - Double-click to rename any layer
+- **Quick Delete** - Delete layers directly from the panel
+
+### v1.4.6 - UI Revamp
+
+- Collapsible Toolbar Sections (Draw, Shapes, Color, Settings)
+- Responsive UI Scaling based on window size
+- Orama Branding
 
 ### v1.4.5 - Selection & Alignment Tools
 
