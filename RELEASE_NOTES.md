@@ -528,3 +528,4 @@ npm run build
 ---
 
 **Built with ❤️ by Orama Technologies**
+**Webhook on Discord by Github**
