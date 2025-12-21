@@ -27,4 +27,4 @@ SOFTWARE.
 
 Any questions OR inquires must be sent to:
 
-Orama // Contact via GitHub repository
+Orama // Contact via GitHub repository // 2026
