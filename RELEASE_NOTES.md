@@ -1,5 +1,25 @@
 # Cassini - Release Notes
 
+## [1.5.3] - 2025-12-22
+
+### Added
+
+- **User Onboarding**: Personalized experience with a name input field on the Welcome Screen.
+- **Settings Sidebar**: Centralized control for user profile, grid customization, and themes.
+- **Command Palette (Cmd+K)**: Power-user search bar for tools, actions, and navigation.
+- **High-Contrast Light Mode**: New icon theme for improved visibility on lighter backgrounds.
+- **Shortcuts Reference**: Built-in keyboard shortcut guide in the Settings Sidebar.
+- **Metadata Support**: Exported files now include author name and timestamp.
+- **Smart Export Naming**: Files are now saved with descriptive names (username + date).
+
+### Improved
+
+- **Author Persistence**: Importing a file now restores the original author's name to the settings.
+- **UI Consistency**: Every icon in the toolbar and branding now respects the selected icon theme.
+- **Welcome Screen Flow**: Pre-populates your name when returning from a session.
+
+---
+
 ## [1.5.2] - 2025-12-21
 
 ### Added

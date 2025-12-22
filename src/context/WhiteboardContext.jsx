@@ -39,6 +39,14 @@ export const WhiteboardProvider = ({ children }) => {
     const [showEquationModal, setShowEquationModal] = useState(false);
     const [showTextModal, setShowTextModal] = useState(false);
     const [showBackgroundModal, setShowBackgroundModal] = useState(false);
+    const [showSettingsSidebar, setShowSettingsSidebar] = useState(false);
+    const [showWelcome, setShowWelcome] = useState(true);
+
+    // Settings
+    const [settings, setSettings] = useState({
+        userName: 'User',
+        iconTheme: 'liquid' // 'liquid' | 'light'
+    });
 
     // Viewport state for Infinite Canvas
     const [viewport, setViewport] = useState({ x: 0, y: 0, scale: 1 });
@@ -139,7 +147,7 @@ export const WhiteboardProvider = ({ children }) => {
 
         // Trigger download
         const link = document.createElement('a');
-        link.download = `cassini-export-${Date.now()}.png`;
+        link.download = `cassini-${settings.userName.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}.png`;
         link.href = tempCanvas.toDataURL('image/png');
         link.click();
     }, [canvasRef]);
@@ -232,6 +240,10 @@ export const WhiteboardProvider = ({ children }) => {
         setBackground(prev => ({ ...prev, ...settings }));
     }, []);
 
+    const updateSettings = useCallback((newSettings) => {
+        setSettings(prev => ({ ...prev, ...newSettings }));
+    }, []);
+
     const value = {
         activeTool,
         setActiveTool,
@@ -275,7 +287,13 @@ export const WhiteboardProvider = ({ children }) => {
         background,
         updateBackground,
         showBackgroundModal,
-        setShowBackgroundModal
+        setShowBackgroundModal,
+        settings,
+        updateSettings,
+        showSettingsSidebar,
+        setShowSettingsSidebar,
+        showWelcome,
+        setShowWelcome
     };
 
     return (

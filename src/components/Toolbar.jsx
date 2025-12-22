@@ -49,7 +49,8 @@ const Toolbar = () => {
         viewport,
         setElements,
         updateBackground,
-        setViewport
+        setViewport,
+        settings
     } = useWhiteboard();
 
     const [isCollapsed, setIsCollapsed] = useState(false);
@@ -115,9 +116,10 @@ const Toolbar = () => {
 
     const ToolButton = ({ tool, size = baseSize }) => {
         const Icon = tool.icon;
+        const isLight = settings.iconTheme === 'light';
         return (
             <button
-                className={`glass-button ${activeTool === tool.id ? 'active' : ''}`}
+                className={`glass-button ${activeTool === tool.id ? 'active' : ''} ${isLight ? 'light-icons' : ''}`}
                 onClick={() => handleToolClick(tool)}
                 title={tool.label}
                 style={{
@@ -136,7 +138,7 @@ const Toolbar = () => {
 
     const SectionHeader = ({ label, isOpen, onToggle, icon: Icon }) => (
         <button
-            className="glass-button"
+            className={`glass-button ${settings.iconTheme === 'light' ? 'light-icons' : ''}`}
             onClick={onToggle}
             title={`${isOpen ? 'Collapse' : 'Expand'} ${label}`}
             style={{
@@ -156,14 +158,17 @@ const Toolbar = () => {
         </button>
     );
 
-    const Divider = () => (
-        <div style={{
-            width: toolbarOrientation === 'horizontal' ? '1px' : '80%',
-            height: toolbarOrientation === 'horizontal' ? baseSize * 0.8 : '1px',
-            background: 'rgba(255, 255, 255, 0.15)',
-            margin: toolbarOrientation === 'horizontal' ? '0 4px' : '4px 0'
-        }} />
-    );
+    const Divider = () => {
+        const isLight = settings.iconTheme === 'light';
+        return (
+            <div style={{
+                width: toolbarOrientation === 'horizontal' ? '1px' : '80%',
+                height: toolbarOrientation === 'horizontal' ? baseSize * 0.8 : '1px',
+                background: isLight ? 'rgba(0, 0, 0, 0.1)' : 'rgba(255, 255, 255, 0.15)',
+                margin: toolbarOrientation === 'horizontal' ? '0 4px' : '4px 0'
+            }} />
+        );
+    };
 
     if (isCollapsed) {
         return (
@@ -175,7 +180,7 @@ const Toolbar = () => {
                 zIndex: 1000
             }}>
                 <button
-                    className="glass-button"
+                    className={`glass-button ${settings.iconTheme === 'light' ? 'light-icons' : ''}`}
                     onClick={() => setIsCollapsed(false)}
                     title="Expand Toolbar"
                     style={{
@@ -185,7 +190,8 @@ const Toolbar = () => {
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        gap: '4px'
+                        gap: '4px',
+                        color: settings.iconTheme === 'light' ? 'rgba(0, 0, 0, 0.85)' : 'white'
                     }}
                 >
                     <ChevronDown size={iconSize} />
@@ -209,7 +215,7 @@ const Toolbar = () => {
             }),
             zIndex: 1000
         }}>
-            <div className="glass" style={{
+            <div className={`glass ${settings.iconTheme === 'light' ? 'light-glass' : ''}`} style={{
                 padding: 8 * uiScale,
                 borderRadius: 'var(--radius-lg)',
                 display: 'flex',
@@ -225,7 +231,7 @@ const Toolbar = () => {
                 {/* Collapse/Orientation Controls */}
                 <div style={{ display: 'flex', gap: 2 }}>
                     <button
-                        className="glass-button"
+                        className={`glass-button ${settings.iconTheme === 'light' ? 'light-icons' : ''}`}
                         onClick={() => setIsCollapsed(true)}
                         title="Collapse Toolbar"
                         style={{ width: baseSize * 0.7, height: baseSize * 0.7, padding: 4 }}
@@ -233,7 +239,7 @@ const Toolbar = () => {
                         <ChevronUp size={smallIconSize} />
                     </button>
                     <button
-                        className="glass-button"
+                        className={`glass-button ${settings.iconTheme === 'light' ? 'light-icons' : ''}`}
                         onClick={() => setToolbarOrientation(prev => prev === 'horizontal' ? 'vertical' : 'horizontal')}
                         title="Toggle Orientation"
                         style={{ width: baseSize * 0.7, height: baseSize * 0.7, padding: 4 }}
@@ -270,13 +276,15 @@ const Toolbar = () => {
                                     label: 'Save (Ctrl+S)',
                                     action: () => {
                                         const data = {
-                                            version: '1.4.8',
+                                            version: '1.5.3',
                                             name: 'My Whiteboard',
+                                            author: settings.userName,
+                                            timestamp: new Date().toISOString(),
                                             elements,
                                             background,
                                             viewport
                                         };
-                                        saveWhiteboard(data);
+                                        saveWhiteboard(data, `cassini-${settings.userName.toLowerCase().replace(/\s+/g, '-')}-${new Date().toISOString().split('T')[0]}`);
                                     }
                                 }}
                             />
@@ -293,6 +301,7 @@ const Toolbar = () => {
                                                 if (data.elements) setElements(data.elements);
                                                 if (data.background) updateBackground(data.background);
                                                 if (data.viewport) setViewport(data.viewport);
+                                                if (data.author) updateSettings({ userName: data.author });
                                             } catch (error) {
                                                 alert(error.message);
                                             }
@@ -387,7 +396,7 @@ const Toolbar = () => {
                     {showSettings && (
                         <div style={{ display: 'flex', flexDirection: 'column', gap: 8, padding: '4px 8px' }}>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                                <label style={{ fontSize: 10 * uiScale, color: 'rgba(255, 255, 255, 0.7)' }}>
+                                <label style={{ fontSize: 10 * uiScale, color: settings.iconTheme === 'light' ? 'rgba(0, 0, 0, 0.7)' : 'rgba(255, 255, 255, 0.7)' }}>
                                     Size: {toolProperties.thickness}px
                                 </label>
                                 <input
@@ -400,7 +409,7 @@ const Toolbar = () => {
                                 />
                             </div>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                                <label style={{ fontSize: 10 * uiScale, color: 'rgba(255, 255, 255, 0.7)' }}>
+                                <label style={{ fontSize: 10 * uiScale, color: settings.iconTheme === 'light' ? 'rgba(0, 0, 0, 0.7)' : 'rgba(255, 255, 255, 0.7)' }}>
                                     Opacity: {Math.round(toolProperties.opacity * 100)}%
                                 </label>
                                 <input
@@ -415,7 +424,7 @@ const Toolbar = () => {
                             </div>
                             {['rectangle', 'circle'].includes(activeTool) && (
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                                    <label style={{ fontSize: 10 * uiScale, color: 'rgba(255, 255, 255, 0.7)' }}>
+                                    <label style={{ fontSize: 10 * uiScale, color: settings.iconTheme === 'light' ? 'rgba(0, 0, 0, 0.7)' : 'rgba(255, 255, 255, 0.7)' }}>
                                         Fill: {Math.round(toolProperties.fillOpacity * 100)}%
                                     </label>
                                     <input
@@ -437,13 +446,13 @@ const Toolbar = () => {
 
                 {/* Action Buttons - Always Visible */}
                 <div style={{ display: 'flex', flexDirection: toolbarOrientation === 'horizontal' ? 'row' : 'column', gap: 4 }}>
-                    <button className="glass-button" onClick={undo} title="Undo" style={{ width: baseSize, height: baseSize, padding: baseSize * 0.2 }}>
+                    <button className={`glass-button ${settings.iconTheme === 'light' ? 'light-icons' : ''}`} onClick={undo} title="Undo" style={{ width: baseSize, height: baseSize, padding: baseSize * 0.2 }}>
                         <Undo size={iconSize} />
                     </button>
-                    <button className="glass-button" onClick={redo} title="Redo" style={{ width: baseSize, height: baseSize, padding: baseSize * 0.2 }}>
+                    <button className={`glass-button ${settings.iconTheme === 'light' ? 'light-icons' : ''}`} onClick={redo} title="Redo" style={{ width: baseSize, height: baseSize, padding: baseSize * 0.2 }}>
                         <Redo size={iconSize} />
                     </button>
-                    <button className="glass-button" onClick={clearCanvas} title="Clear All" style={{ width: baseSize, height: baseSize, padding: baseSize * 0.2 }}>
+                    <button className={`glass-button ${settings.iconTheme === 'light' ? 'light-icons' : ''}`} onClick={clearCanvas} title="Clear All" style={{ width: baseSize, height: baseSize, padding: baseSize * 0.2 }}>
                         <Trash2 size={iconSize} />
                     </button>
                 </div>
@@ -452,13 +461,13 @@ const Toolbar = () => {
 
                 {/* Export/Import/Grid - Always Visible */}
                 <div style={{ display: 'flex', flexDirection: toolbarOrientation === 'horizontal' ? 'row' : 'column', gap: 4 }}>
-                    <button className="glass-button" onClick={exportCanvasPNG} title="Export PNG" style={{ width: baseSize, height: baseSize, padding: baseSize * 0.2 }}>
+                    <button className={`glass-button ${settings.iconTheme === 'light' ? 'light-icons' : ''}`} onClick={exportCanvasPNG} title="Export PNG" style={{ width: baseSize, height: baseSize, padding: baseSize * 0.2 }}>
                         <Download size={iconSize} />
                     </button>
-                    <button className="glass-button" onClick={importImage} title="Import Image" style={{ width: baseSize, height: baseSize, padding: baseSize * 0.2 }}>
+                    <button className={`glass-button ${settings.iconTheme === 'light' ? 'light-icons' : ''}`} onClick={importImage} title="Import Image" style={{ width: baseSize, height: baseSize, padding: baseSize * 0.2 }}>
                         <Upload size={iconSize} />
                     </button>
-                    <button className="glass-button" onClick={() => setShowBackgroundModal(true)} title="Background" style={{ width: baseSize, height: baseSize, padding: baseSize * 0.2 }}>
+                    <button className={`glass-button ${settings.iconTheme === 'light' ? 'light-icons' : ''}`} onClick={() => setShowBackgroundModal(true)} title="Background" style={{ width: baseSize, height: baseSize, padding: baseSize * 0.2 }}>
                         <Grid size={iconSize} />
                     </button>
                 </div>

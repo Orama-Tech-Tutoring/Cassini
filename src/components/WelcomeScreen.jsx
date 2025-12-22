@@ -1,16 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { FilePlus, FolderOpen, Clock, ChevronRight } from 'lucide-react';
+import { FilePlus, FolderOpen, Clock, ChevronRight, User } from 'lucide-react';
 import { loadWhiteboard, getRecentFiles } from '../utils/fileUtils';
+import { useWhiteboard } from '../context/WhiteboardContext';
 
 const WelcomeScreen = ({ onNewCanvas, onLoadFile }) => {
+    const { settings, updateSettings } = useWhiteboard();
     const [recentFiles, setRecentFiles] = useState([]);
     const [isExiting, setIsExiting] = useState(false);
+    const [tempName, setTempName] = useState(settings.userName || '');
+    const [error, setError] = useState('');
 
     useEffect(() => {
         setRecentFiles(getRecentFiles());
     }, []);
 
     const handleNewCanvas = () => {
+        if (!tempName.trim()) {
+            setError('Please enter your name to continue');
+            return;
+        }
+        updateSettings({ userName: tempName.trim() });
         setIsExiting(true);
         setTimeout(onNewCanvas, 300); // Wait for exit animation
     };
@@ -116,6 +125,59 @@ const WelcomeScreen = ({ onNewCanvas, onLoadFile }) => {
                         }}>
                             by Orama
                         </p>
+                    </div>
+
+                    <div style={{ marginBottom: '32px' }}>
+                        <div style={{
+                            background: 'rgba(255, 255, 255, 0.05)',
+                            borderRadius: '16px',
+                            padding: '20px',
+                            border: error ? '1px solid rgba(255, 69, 58, 0.5)' : '1px solid rgba(255, 255, 255, 0.1)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '16px',
+                            transition: 'all 0.3s ease'
+                        }}>
+                            <div style={{
+                                width: '40px',
+                                height: '40px',
+                                borderRadius: '12px',
+                                background: 'linear-gradient(135deg, #007AFF 0%, #00C6FF 100%)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                color: 'white'
+                            }}>
+                                <User size={20} />
+                            </div>
+                            <div style={{ flex: 1 }}>
+                                <div style={{ fontSize: '11px', color: 'rgba(255, 255, 255, 0.4)', marginBottom: '2px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Your Name</div>
+                                <input
+                                    type="text"
+                                    placeholder="Who are you?"
+                                    value={tempName}
+                                    onChange={(e) => {
+                                        setTempName(e.target.value);
+                                        if (e.target.value.trim()) setError('');
+                                    }}
+                                    style={{
+                                        background: 'none',
+                                        border: 'none',
+                                        color: 'white',
+                                        fontSize: '16px',
+                                        fontWeight: 500,
+                                        padding: '2px 0',
+                                        width: '100%',
+                                        outline: 'none'
+                                    }}
+                                />
+                            </div>
+                        </div>
+                        {error && (
+                            <div style={{ color: '#FF453A', fontSize: '12px', marginTop: '8px', paddingLeft: '4px' }}>
+                                {error}
+                            </div>
+                        )}
                     </div>
 
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>

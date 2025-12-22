@@ -6,17 +6,18 @@ import TextModal from './components/TextModal';
 import BackgroundModal from './components/BackgroundModal';
 import Branding from './components/Branding';
 import WelcomeScreen from './components/WelcomeScreen';
+import SettingsSidebar from './components/SettingsSidebar';
+import CommandPalette from './components/CommandPalette';
 import './App.css';
 
 const MainLayout = () => {
-    const { setElements, updateBackground, setViewport } = useWhiteboard();
-    const [showWelcome, setShowWelcome] = useState(true);
+    const { setElements, updateBackground, setViewport, showWelcome, setShowWelcome, updateSettings } = useWhiteboard();
 
     const handleLoadFile = (data, filename) => {
         if (data.elements) setElements(data.elements);
         if (data.background) updateBackground(data.background);
         if (data.viewport) setViewport(data.viewport);
-        // Optionally store filename if we want to track it
+        if (data.author) updateSettings({ userName: data.author });
         setShowWelcome(false);
     };
 
@@ -34,6 +35,8 @@ const MainLayout = () => {
                 <TextModal />
                 <BackgroundModal />
                 <Branding />
+                <SettingsSidebar />
+                <CommandPalette />
             </div>
         </>
     );
