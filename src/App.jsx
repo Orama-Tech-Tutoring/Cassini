@@ -5,7 +5,6 @@ import Toolbar from './components/Toolbar';
 import TextModal from './components/TextModal';
 import BackgroundModal from './components/BackgroundModal';
 import Branding from './components/Branding';
-import ChatSidebar from './components/ChatSidebar';
 import WelcomeScreen from './components/WelcomeScreen';
 import './App.css';
 
@@ -32,7 +31,6 @@ const MainLayout = () => {
             <div style={{ opacity: showWelcome ? 0 : 1, transition: 'opacity 0.5s ease' }}>
                 <Whiteboard />
                 <Toolbar />
-                <ChatSidebar />
                 <TextModal />
                 <BackgroundModal />
                 <Branding />

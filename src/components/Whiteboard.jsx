@@ -6,6 +6,19 @@ import SelectionIndicator from './SelectionIndicator';
 import LayersPanel from './LayersPanel';
 import { saveWhiteboard } from '../utils/fileUtils';
 
+// Helper to get anchor points for a shape
+const getAnchors = (element) => {
+    if (!['rectangle', 'circle'].includes(element.type)) return [];
+
+    const { x, y, width: w, height: h } = element;
+    return [
+        { x: x + w / 2, y, side: 'top' },
+        { x: x + w / 2, y: y + h, side: 'bottom' },
+        { x: x, y: y + h / 2, side: 'left' },
+        { x: x + w, y: y + h / 2, side: 'right' }
+    ];
+};
+
 const Whiteboard = () => {
     const canvasRef = useRef(null);
     const currentPathRef = useRef([]);
@@ -32,6 +45,7 @@ const Whiteboard = () => {
         elements,
         addElement,
         updateElement,
+        bulkUpdateElements,
         deleteElement,
         ruler,
         setRuler,
@@ -532,6 +546,23 @@ const Whiteboard = () => {
         ctx.restore();
     };
 
+    const drawAnchorPoints = (ctx, element) => {
+        const anchors = getAnchors(element);
+        const radius = 4 / viewport.scale;
+
+        ctx.save();
+        anchors.forEach(anchor => {
+            ctx.beginPath();
+            ctx.arc(anchor.x, anchor.y, radius, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(0, 122, 255, 0.5)';
+            ctx.fill();
+            ctx.strokeStyle = '#FFFFFF';
+            ctx.lineWidth = 1 / viewport.scale;
+            ctx.stroke();
+        });
+        ctx.restore();
+    };
+
     const drawRuler = (ctx, ruler) => {
         ctx.save();
         ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
@@ -751,6 +782,13 @@ const Whiteboard = () => {
         if (ruler) drawRuler(ctx, ruler);
         if (protractor) drawProtractor(ctx, protractor);
 
+        // Draw anchor points for shapes if connector tools are active
+        if (['line', 'arrow'].includes(activeTool)) {
+            elements.filter(el => ['rectangle', 'circle'].includes(el.type)).forEach(el => {
+                drawAnchorPoints(ctx, el);
+            });
+        }
+
         // Draw selection boxes
         selectedElements.forEach(el => drawSelectionBox(ctx, el));
 
@@ -931,14 +969,44 @@ const Whiteboard = () => {
             });
         } else if (['rectangle', 'circle', 'line', 'arrow'].includes(activeTool)) {
             setIsDrawing(true);
+            let startX = pos.x;
+            let startY = pos.y;
+            let boundStartId = null;
+            let boundStartSide = null;
+
+            // Snap start to anchor
+            if (['line', 'arrow'].includes(activeTool)) {
+                let minDistance = 20 / viewport.scale;
+                let nearest = null;
+
+                elements.filter(el => ['rectangle', 'circle'].includes(el.type)).forEach(el => {
+                    getAnchors(el).forEach(anchor => {
+                        const dist = Math.hypot(anchor.x - pos.x, anchor.y - pos.y);
+                        if (dist < minDistance) {
+                            minDistance = dist;
+                            nearest = { ...anchor, id: el.id };
+                        }
+                    });
+                });
+
+                if (nearest) {
+                    startX = nearest.x;
+                    startY = nearest.y;
+                    boundStartId = nearest.id;
+                    boundStartSide = nearest.side;
+                }
+            }
+
             setCurrentShape({
                 type: activeTool,
-                x: pos.x,
-                y: pos.y,
+                x: startX,
+                y: startY,
                 width: 0,
                 height: 0,
-                startX: pos.x,
-                startY: pos.y,
+                startX: startX,
+                startY: startY,
+                boundStartId,
+                boundStartSide,
                 color: toolProperties.color,
                 thickness: toolProperties.thickness,
                 opacity: toolProperties.opacity,
@@ -1113,10 +1181,43 @@ const Whiteboard = () => {
 
         // Update shape preview
         if (isDrawing && currentShape) {
+            let width = pos.x - currentShape.startX;
+            let height = pos.y - currentShape.startY;
+            let currentP = { x: pos.x, y: pos.y };
+            let boundId = null;
+            let boundSide = null;
+
+            // Snap connector start/end to anchors
+            if (['line', 'arrow'].includes(activeTool)) {
+                // Find nearest anchor
+                let minDistance = 20 / viewport.scale;
+                let nearest = null;
+
+                elements.filter(el => ['rectangle', 'circle'].includes(el.type)).forEach(el => {
+                    getAnchors(el).forEach(anchor => {
+                        const dist = Math.hypot(anchor.x - pos.x, anchor.y - pos.y);
+                        if (dist < minDistance) {
+                            minDistance = dist;
+                            nearest = { ...anchor, id: el.id };
+                        }
+                    });
+                });
+
+                if (nearest) {
+                    currentP = { x: nearest.x, y: nearest.y };
+                    width = nearest.x - currentShape.startX;
+                    height = nearest.y - currentShape.startY;
+                    boundId = nearest.id;
+                    boundSide = nearest.side;
+                }
+            }
+
             setCurrentShape({
                 ...currentShape,
-                width: pos.x - currentShape.startX,
-                height: pos.y - currentShape.startY
+                width,
+                height,
+                boundEndId: boundId,
+                boundEndSide: boundSide
             });
             return;
         }
@@ -1138,6 +1239,53 @@ const Whiteboard = () => {
                 setDragOffset({ x: pos.x - newPoints[0].x, y: pos.y - newPoints[0].y });
             } else {
                 updateElement(draggedElement.id, { x: newX, y: newY });
+
+                // Update connected lines
+                if (['rectangle', 'circle'].includes(draggedElement.type)) {
+                    const connectorUpdates = {};
+                    const shapeAnchors = getAnchors({ ...draggedElement, x: newX, y: newY });
+
+                    elements.forEach(el => {
+                        if (['line', 'arrow'].includes(el.type)) {
+                            let updated = false;
+                            let elUpdates = {};
+
+                            if (el.boundStartId === draggedElement.id) {
+                                const anchor = shapeAnchors.find(a => a.side === el.boundStartSide);
+                                if (anchor) {
+                                    // Move start point (x, y)
+                                    // But wait, line width/height are relative to x,y
+                                    // If we move x,y, we must adjust width/height to keep end point fixed
+                                    const endX = el.x + el.width;
+                                    const endY = el.y + el.height;
+                                    elUpdates.x = anchor.x;
+                                    elUpdates.y = anchor.y;
+                                    elUpdates.width = endX - anchor.x;
+                                    elUpdates.height = endY - anchor.y;
+                                    updated = true;
+                                }
+                            }
+
+                            if (el.boundEndId === draggedElement.id) {
+                                const anchor = shapeAnchors.find(a => a.side === el.boundEndSide);
+                                if (anchor) {
+                                    // Move end point (update width/height)
+                                    elUpdates.width = anchor.x - (elUpdates.x || el.x);
+                                    elUpdates.height = anchor.y - (elUpdates.y || el.y);
+                                    updated = true;
+                                }
+                            }
+
+                            if (updated) {
+                                connectorUpdates[el.id] = elUpdates;
+                            }
+                        }
+                    });
+
+                    if (Object.keys(connectorUpdates).length > 0) {
+                        bulkUpdateElements(connectorUpdates);
+                    }
+                }
             }
             return;
         }

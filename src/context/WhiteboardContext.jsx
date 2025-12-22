@@ -86,6 +86,10 @@ export const WhiteboardProvider = ({ children }) => {
         setElements(prev => prev.map(el => el.id === id ? { ...el, ...updates } : el));
     }, []);
 
+    const bulkUpdateElements = useCallback((updatesMap) => {
+        setElements(prev => prev.map(el => updatesMap[el.id] ? { ...el, ...updatesMap[el.id] } : el));
+    }, []);
+
     const deleteElement = useCallback((id) => {
         setElements(prev => {
             const newElements = prev.filter(el => el.id !== id);
@@ -237,6 +241,7 @@ export const WhiteboardProvider = ({ children }) => {
         setElements,
         addElement,
         updateElement,
+        bulkUpdateElements,
         deleteElement,
         selectedElement,
         setSelectedElement,

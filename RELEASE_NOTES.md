@@ -1,5 +1,20 @@
 # Cassini - Release Notes
 
+## [1.5.2] - 2025-12-21
+
+### Added
+
+- **Smart Connectors (Beta)**: Lines and Arrows now snap to anchor points on Rectangles and Circles.
+- **Sticky Connections**: Moving a shape automatically updates any lines connected to its anchor points.
+- **Visual Anchors**: Anchor points now appear when using connector tools for precision placement.
+
+### Removed
+
+- **Gemini AI Assistant**: Removed the built-in AI chat sidebar and associated services to streamline the creative experience.
+- AI-related documentation and branding ("Assistant").
+
+---
+
 ## Version 1.5.0.1 - UI Alignment Refinement
 
 **Release Date:** December 21, 2024
