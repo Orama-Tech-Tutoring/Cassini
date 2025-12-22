@@ -341,7 +341,7 @@ const Toolbar = () => {
                 <div style={{ display: 'flex', flexDirection: toolbarOrientation === 'horizontal' ? 'row' : 'column', gap: 4, alignItems: 'center' }}>
                     <SectionHeader label="Color" isOpen={showColorPanel} onToggle={() => setShowColorPanel(!showColorPanel)} icon={Palette} />
                     {showColorPanel && (
-                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, maxWidth: 200 }}>
+                        <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
                             {colors.map(color => (
                                 <button
                                     key={color}

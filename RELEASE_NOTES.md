@@ -1,5 +1,15 @@
 # Cassini - Release Notes
 
+## Version 1.5.0.1 - UI Alignment Refinement
+
+**Release Date:** December 21, 2024
+
+### 🚀 Improvements
+
+- **Horizontal Color Picker** - Corrected the color palette layout to ensure it always expands horizontally, matching the "floating bar" aesthetic.
+
+---
+
 ## Version 1.5.0 - Documentation Refactoring
 
 **Release Date:** December 21, 2024
