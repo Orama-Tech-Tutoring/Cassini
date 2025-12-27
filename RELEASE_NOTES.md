@@ -16,8 +16,6 @@ This major update focuses on refining the individual creative workflow, removing
 ### Removed
 
 - **Layers System**: Removed the layers panel to simplify the interface and focus on speed and direct manipulation.
-- **Templates**: Removed template presets to streamline the "New Canvas" flow.
-
 ---
 
 ## [1.5.3] - 2025-12-22
